@@ -1,0 +1,10 @@
+{
+  "name": "werkstatt-huepfer-rangliste-server",
+  "version": "1.0.0",
+  "description": "Kleiner Server für die Online-Rangliste von Werkstatt-Hüpfer (keine Abhängigkeiten)",
+  "main": "rangliste-server.js",
+  "scripts": { "start": "node rangliste-server.js" },
+  "engines": { "node": ">=18" },
+  "private": true,
+  "license": "UNLICENSED"
+}

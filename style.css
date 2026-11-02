@@ -1,0 +1,434 @@
+/* =========================================================
+   Werkstatt-Hüpfer – Stylesheet
+   Nur Systemschriften, keine externen Ressourcen.
+   ========================================================= */
+
+:root {
+  --hintergrund: #1b1410;
+  --flaeche: #2a201a;
+  --text: #f6ecdf;
+  --text-leise: #cbbba8;
+  --akzent: #e8742a;
+  --akzent-hell: #ff8c3f;
+  --gelb: #ffd23f;
+  --link: #ffb37a;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--hintergrund);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: var(--link); }
+a:hover { color: var(--gelb); }
+
+/* ---------- Kopfzeile ---------- */
+.kopf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 8px 16px;
+}
+.kopf h1 { margin: 0; font-size: 1.15rem; color: var(--gelb); }
+.kopf h1 a { color: inherit; text-decoration: none; }
+.untertitel { color: var(--text-leise); font-size: .9rem; }
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 8px;
+}
+
+/* ---------- Spielbereich ---------- */
+.spiel {
+  position: relative;
+  /* 16:9, passt in Breite und Höhe des Fensters */
+  width: min(100%, 1280px, calc((100vh - 96px) * 16 / 9));
+  width: min(100%, 1280px, calc((100svh - 96px) * 16 / 9));
+  aspect-ratio: 16 / 9;
+  container-type: inline-size;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .5);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#spiel-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  touch-action: none;
+}
+
+/* ---------- Menüs (liegen über dem Canvas) ---------- */
+.menue {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .55em;
+  padding: 1em;
+  overflow: auto;
+  text-align: center;
+  background: rgba(20, 12, 8, .72);
+  font-size: 16px;
+  font-size: clamp(11px, 2.1cqw, 22px);
+}
+.menue.sichtbar { display: flex; }
+/* Vertikal zentrieren, aber bei zu viel Inhalt oben nicht abschneiden (scrollbar) */
+.menue { justify-content: flex-start; z-index: 3; }
+.menue > :first-child { margin-top: auto; }
+.menue > :last-child { margin-bottom: auto; }
+
+.menue h2 {
+  margin: 0 0 .15em;
+  font-size: 2.3em;
+  line-height: 1.1;
+  color: var(--gelb);
+  text-shadow: 3px 3px 0 #000;
+  letter-spacing: .02em;
+}
+.menue p { margin: 0; }
+.unterzeile { color: var(--text-leise); margin-bottom: .4em !important; }
+
+.knopf {
+  font: inherit;
+  font-weight: 700;
+  min-width: 14em;
+  padding: .5em 1.2em;
+  border: 3px solid #000;
+  border-radius: 6px;
+  background: var(--akzent);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #000;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, .4);
+}
+.knopf:hover, .knopf:focus-visible {
+  background: var(--akzent-hell);
+  outline: 3px solid var(--gelb);
+  outline-offset: 1px;
+}
+.knopf:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
+.knopf:disabled {
+  background: #4d4540;
+  color: #a89c90;
+  cursor: not-allowed;
+  outline: none;
+}
+.knopf.klein {
+  min-width: auto;
+  font-size: .75em;
+  padding: .35em .9em;
+  background: #5a4a40;
+  margin-top: .4em;
+}
+
+.highscore-zeile { margin-top: .3em !important; }
+.highscore-zeile strong, .ergebnis strong { color: var(--gelb); }
+.hinweis { color: var(--text-leise); font-size: .85em; }
+.rekord { color: var(--gelb); font-weight: 700; }
+
+.level-raster {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: .45em;
+  width: min(96%, 52em);
+}
+.level-raster .knopf {
+  min-width: 0;
+  width: 100%;
+  padding: .3em .3em;
+  font-size: .85em;
+  box-shadow: 0 3px 0 #000;
+}
+@media (max-width: 560px) {
+  .level-raster { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+/* Level/Skin, das man mit Münzen kaufen kann */
+.knopf.kaufbar { background: #2e7d4f; }
+.knopf.kaufbar:hover, .knopf.kaufbar:focus-visible { background: #3a9a62; }
+.level-raster .preis { color: var(--gelb); font-weight: 700; }
+.knopf.zu-teuer { opacity: .55; }
+.konto-zeile strong { color: var(--gelb); }
+
+/* ---------- Eigener Dialog ---------- */
+.dialog {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  background: rgba(0, 0, 0, .6);
+  font-size: 16px;
+  font-size: clamp(11px, 2.1cqw, 20px);
+}
+/* Das hidden-Attribut muss immer gewinnen, auch gegen display: flex usw. */
+[hidden] { display: none !important; }
+.dialog[hidden] { display: none; }
+.dialog-box {
+  max-width: 28em;
+  padding: 1em 1.4em;
+  border: 3px solid #000;
+  border-radius: 8px;
+  background: var(--flaeche);
+  box-shadow: 0 6px 0 #000;
+  text-align: center;
+}
+.dialog-box p { margin: 0 0 .8em; line-height: 1.4; }
+.dialog-box .knopf { min-width: 7em; }
+.dialog-box .knopf.klein { margin-top: 0; }
+
+/* ---------- Skin-Shop ---------- */
+.skin-raster {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .5em;
+  width: min(96%, 40em);
+}
+.skin-karte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .25em;
+  padding: .4em .3em;
+  border: 2px solid rgba(255, 255, 255, .15);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, .3);
+}
+.skin-karte.spezial { border-color: #a64bff; }
+.skin-karte.spezial .skin-name { color: #ffd23f; }
+.code-form { margin-bottom: .2em; }
+.skin-karte.aktiv { border-color: var(--gelb); background: rgba(255, 210, 63, .12); }
+.skin-karte canvas {
+  width: 3em;
+  height: 4em;
+  image-rendering: pixelated;
+}
+.skin-name { font-size: .85em; font-weight: 700; }
+.skin-karte .knopf.klein { margin-top: 0; width: 100%; padding: .25em .3em; }
+@media (max-width: 560px) {
+  .skin-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.level-raster .knopf small { display: block; font-weight: 400; font-size: .75em; opacity: .9; }
+
+.steuer-tabelle, .ergebnis-tabelle {
+  border-collapse: collapse;
+  text-align: left;
+}
+.steuer-tabelle th, .steuer-tabelle td,
+.ergebnis-tabelle th, .ergebnis-tabelle td {
+  padding: .2em .7em;
+  border-bottom: 1px solid rgba(255, 255, 255, .15);
+}
+.steuer-tabelle th, .ergebnis-tabelle th { color: var(--gelb); }
+.ergebnis-tabelle td { text-align: right; font-variant-numeric: tabular-nums; }
+/* ---------- Einstellungen ---------- */
+.einstellungen {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .5em 1.4em;
+  width: min(96%, 40em);
+  text-align: left;
+}
+.einstellungen label {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  flex-wrap: wrap;
+}
+.einstellungen .regler, .einstellungen .auswahl { justify-content: space-between; }
+.einstellungen input[type="range"] { flex: 1; min-width: 6em; accent-color: var(--akzent); }
+.einstellungen output { width: 3.2em; text-align: right; color: var(--gelb); font-variant-numeric: tabular-nums; }
+.einstellungen select {
+  font: inherit;
+  padding: .15em .3em;
+  border: 2px solid #000;
+  border-radius: 4px;
+  background: #3a2e26;
+  color: var(--text);
+}
+.einstellungen input[type="checkbox"] { width: 1.1em; height: 1.1em; accent-color: var(--akzent); }
+.knopf-reihe { display: flex; gap: .6em; flex-wrap: wrap; justify-content: center; }
+@media (max-width: 560px) {
+  .einstellungen { grid-template-columns: 1fr; }
+}
+
+/* ---------- Rangliste ---------- */
+.ranglisten-tabelle {
+  border-collapse: collapse;
+  min-width: min(96%, 30em);
+  font-variant-numeric: tabular-nums;
+}
+.ranglisten-tabelle th, .ranglisten-tabelle td {
+  padding: .15em .6em;
+  border-bottom: 1px solid rgba(255, 255, 255, .15);
+  text-align: left;
+}
+.ranglisten-tabelle th { color: var(--gelb); }
+.ranglisten-tabelle td:nth-child(3), .ranglisten-tabelle th:nth-child(3) { text-align: right; }
+.ranglisten-tabelle tr.neu td { color: var(--gelb); font-weight: 700; }
+.namens-form { display: flex; flex-wrap: wrap; gap: .5em; align-items: center; justify-content: center; }
+.namens-form label { display: flex; flex-wrap: wrap; gap: .4em; align-items: center; justify-content: center; }
+.namens-feld {
+  font: inherit;
+  width: 9em;
+  padding: .25em .4em;
+  border: 2px solid #000;
+  border-radius: 4px;
+  background: #fff8ec;
+  color: #000;
+}
+.namens-form .knopf.klein { margin-top: 0; }
+.namens-form .online-wahl {
+  flex: 1 1 100%; flex-wrap: nowrap; align-items: flex-start; justify-content: center;
+  text-align: left; font-size: .8em; color: var(--text); text-shadow: 0 1px 3px #000, 0 0 6px #000;
+}
+.namens-form .online-wahl span { max-width: 32em; }
+.namens-form .online-haken { flex: none; width: 1.5em; height: 1.5em; margin: 0; accent-color: var(--gelb); }
+.rangliste-tabs .knopf[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--gelb); }
+
+/* ---------- Röhrenfernseher-Effekt und Vollbild ---------- */
+.spiel.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, .22) 0 2px, transparent 2px 4px);
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, .55);
+}
+.spiel:fullscreen {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+.spiel:fullscreen #spiel-canvas { object-fit: contain; }
+
+.tipps { text-align: left; margin: .2em 0; padding-left: 1.4em; color: var(--text-leise); font-size: .9em; }
+
+/* ---------- Pause-Knopf und Touch-Steuerung ---------- */
+.hud-knopf {
+  position: absolute;
+  top: 7.5%;
+  right: 1.2%;
+  display: none;
+  width: 6cqw;
+  height: 6cqw;
+  min-width: 32px;
+  min-height: 32px;
+  border: 2px solid rgba(255, 255, 255, .6);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, .4);
+  color: #fff;
+  font: 700 14px/1 monospace;
+  cursor: pointer;
+  z-index: 2;
+}
+.spiel.laeuft .hud-knopf { display: block; }
+
+.touch-steuerung {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 2cqw 3cqw;
+  pointer-events: none;
+  z-index: 2;
+}
+body.touch .spiel.laeuft .touch-steuerung { display: flex; }
+.touch-links { display: flex; gap: 2.5cqw; }
+.touch-steuerung button {
+  pointer-events: auto;
+  width: 12cqw;
+  height: 12cqw;
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, .55);
+  background: rgba(0, 0, 0, .35);
+  color: #fff;
+  font-size: 5cqw;
+  line-height: 1;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.touch-steuerung button.aktiv { background: rgba(232, 116, 42, .75); }
+
+.hochkant-hinweis { display: none; color: var(--text-leise); font-size: .9rem; text-align: center; }
+@media (orientation: portrait) {
+  body.touch .hochkant-hinweis { display: block; }
+}
+
+/* Handy quer: Kopfzeile ausblenden, Spielfeld so groß wie möglich
+   (Impressum/Datenschutz bleiben per Scrollen in der Fußzeile erreichbar) */
+@media (orientation: landscape) and (max-height: 520px) {
+  .kopf { display: none; }
+  main { padding: 4px 8px 0; }
+  .spiel {
+    width: min(100%, calc((100vh - 8px) * 16 / 9));
+    width: min(100%, calc((100svh - 8px) * 16 / 9));
+    border-radius: 4px;
+  }
+  .fuss { padding: 6px 16px; }
+}
+
+/* ---------- Fußzeile ---------- */
+.fuss {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 10px;
+  padding: 10px 16px;
+  font-size: .85rem;
+  color: var(--text-leise);
+}
+
+/* ---------- Textseiten (Impressum, Datenschutz) ---------- */
+.seite {
+  width: 100%;
+  max-width: 800px;
+  padding: 8px 16px 24px;
+  line-height: 1.6;
+}
+.seite h2 { color: var(--gelb); margin-top: 1.4em; font-size: 1.25rem; }
+.seite h3 { margin-top: 1.2em; font-size: 1.05rem; }
+.seite address { font-style: normal; }
+.zurueck-link { display: inline-block; margin: 8px 0 4px; }
+.platzhalter {
+  display: inline-block;
+  background: var(--gelb);
+  color: #000;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+}

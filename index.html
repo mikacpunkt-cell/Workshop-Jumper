@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Werkstatt-Hüpfer – a jump &amp; run by KreativWerkstatt Ried</title>
+  <meta name="description" content="Werkstatt-Hüpfer: a small 2D jump-and-run browser game by KreativWerkstatt Ried e.V.">
+  <!-- Leeres Icon, damit der Browser keine favicon.ico nachlädt -->
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="kopf">
+    <h1>Werkstatt-Hüpfer</h1>
+    <span class="untertitel" data-i18n="head.sub">A jump &amp; run by KreativWerkstatt Ried</span>
+  </header>
+
+  <main>
+    <div class="spiel" id="spiel">
+      <canvas id="spiel-canvas" width="640" height="360" aria-label="Game area" data-i18n-aria="aria.canvas"></canvas>
+
+      <!-- Pause-Knopf (vor allem für Touch-Geräte) -->
+      <button class="hud-knopf" id="btn-pause" data-aktion="pause" aria-label="Pause">II</button>
+
+      <!-- Touch-Steuerung (nur auf Touch-Geräten sichtbar) -->
+      <div class="touch-steuerung" aria-hidden="true">
+        <div class="touch-links">
+          <button type="button" data-steuer="links">&#9664;</button>
+          <button type="button" data-steuer="rechts">&#9654;</button>
+        </div>
+        <div class="touch-rechts">
+          <button type="button" data-steuer="sprung">&#9650;</button>
+        </div>
+      </div>
+
+      <!-- Startbildschirm -->
+      <section class="menue" id="menue-start" aria-label="Main menu" data-i18n-aria="menu.main">
+        <h2>Werkstatt-Hüpfer</h2>
+        <p class="unterzeile" data-i18n="menu.tagline">Help the little craftsman through the KreativWerkstatt!</p>
+        <button class="knopf" data-aktion="spielen" data-i18n="menu.play">Play</button>
+        <button class="knopf" data-aktion="levelwahl" data-i18n="menu.levels">Select level</button>
+        <button class="knopf" data-aktion="shop" data-i18n="menu.skins">Skins</button>
+        <button class="knopf" data-aktion="rangliste" data-i18n="menu.leaderboard">Leaderboard</button>
+        <button class="knopf" data-aktion="einstellungen" data-i18n="menu.settings">Settings</button>
+        <button class="knopf" data-aktion="steuerung" data-i18n="menu.controls">Controls</button>
+        <p class="highscore-zeile"><span data-i18n="menu.highscore">Highscore:</span> <strong class="anzeige-highscore">0</strong>
+          &nbsp;·&nbsp; <span data-i18n="menu.coins">Coins:</span> <strong class="anzeige-konto">0</strong></p>
+        <button class="knopf klein" data-aktion="datenLoeschen" data-i18n="menu.deleteData">Delete saved data</button>
+      </section>
+
+      <!-- Level-Auswahl -->
+      <section class="menue" id="menue-levelwahl" aria-label="Select level" data-i18n-aria="menu.levels">
+        <h2 data-i18n="menu.levels">Select level</h2>
+        <p class="konto-zeile"><span data-i18n="coins.yours">Your coins:</span> <strong class="anzeige-konto">0</strong></p>
+        <div class="level-raster" id="level-raster"></div>
+        <p class="hinweis" data-i18n="lv.hint">Finished a level? Then unlock the next one with coins.</p>
+        <button class="knopf" data-aktion="zurueck" data-i18n="back">Back</button>
+      </section>
+
+      <!-- Skin-Shop -->
+      <section class="menue" id="menue-shop" aria-label="Skins" data-i18n-aria="menu.skins">
+        <h2 data-i18n="menu.skins">Skins</h2>
+        <p class="konto-zeile"><span data-i18n="coins.yours">Your coins:</span> <strong class="anzeige-konto">0</strong></p>
+        <form class="namens-form code-form" id="code-form" autocomplete="off">
+          <label><span data-i18n="shop.codeLabel">Redeem code:</span>
+            <input type="text" id="code-feld" class="namens-feld" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>
+          <button type="submit" class="knopf klein" data-i18n="shop.redeemBtn">Redeem</button>
+        </form>
+        <div class="skin-raster" id="skin-raster"></div>
+        <button class="knopf" data-aktion="zurueck" data-i18n="back">Back</button>
+      </section>
+
+      <!-- Steuerung -->
+      <section class="menue" id="menue-steuerung" aria-label="Controls" data-i18n-aria="menu.controls">
+        <h2 data-i18n="menu.controls">Controls</h2>
+        <table class="steuer-tabelle">
+          <tr><th data-i18n="ctl.walk.k">Walk</th><td data-i18n="ctl.walk.v">Arrow keys ← → or A / D</td></tr>
+          <tr><th data-i18n="ctl.jump.k">Jump</th><td data-i18n="ctl.jump.v">Space, ↑ or W – hold longer = jump higher</td></tr>
+          <tr><th data-i18n="ctl.pause.k">Pause</th><td data-i18n="ctl.pause.v">P or Esc</td></tr>
+          <tr><th data-i18n="ctl.phone.k">Phone</th><td data-i18n="ctl.phone.v">Touch buttons at the bottom: left (walk) and right (jump)</td></tr>
+        </table>
+        <ul class="tipps">
+          <li data-i18n="ctl.tip1">Bump bricks and ? blocks from below.</li>
+          <li data-i18n="ctl.tip2">Jump on enemies to defeat them (+50).</li>
+          <li data-i18n="ctl.tip3">The spring gives you 10&nbsp;seconds of double jump.</li>
+          <li data-i18n="ctl.tip4">Touch the flag – that is where you continue after a mistake.</li>
+          <li data-i18n="ctl.tip5">Trampoline: hold the jump button and you fly really high.</li>
+          <li data-i18n="ctl.tip6">Coins go to your account – use them to unlock levels and buy skins.</li>
+        </ul>
+        <button class="knopf" data-aktion="zurueck" data-i18n="back">Back</button>
+      </section>
+
+      <!-- Rangliste -->
+      <section class="menue" id="menue-rangliste" aria-label="Leaderboard" data-i18n-aria="menu.leaderboard">
+        <h2 data-i18n="menu.leaderboard">Leaderboard</h2>
+        <div class="knopf-reihe rangliste-tabs" id="rangliste-tabs" hidden>
+          <button type="button" class="knopf klein" id="tab-lokal" data-aktion="ranglisteLokal" aria-pressed="true" data-i18n="rank.tab.local">This device</button>
+          <button type="button" class="knopf klein" id="tab-online" data-aktion="ranglisteOnline" aria-pressed="false" data-i18n="rank.tab.online">Online</button>
+        </div>
+        <table class="ranglisten-tabelle">
+          <thead><tr><th>#</th><th data-i18n="rank.th.name">Name</th><th data-i18n="points">Points</th><th>Level</th><th data-i18n="rank.th.date">Date</th></tr></thead>
+          <tbody id="rangliste-inhalt"></tbody>
+        </table>
+        <p class="hinweis" id="rangliste-leer" data-i18n="rank.empty">No entries yet – start playing!</p>
+        <p class="hinweis" id="rangliste-status" hidden></p>
+        <p class="hinweis" id="rangliste-hinweis">The leaderboard is only saved on this device.</p>
+        <button class="knopf" data-aktion="zurueck" data-i18n="back">Back</button>
+      </section>
+
+      <!-- Einstellungen -->
+      <section class="menue" id="menue-einstellungen" aria-label="Settings" data-i18n-aria="menu.settings">
+        <h2 data-i18n="menu.settings">Settings</h2>
+        <div class="einstellungen">
+          <label class="auswahl"><span data-i18n="set.language">Language</span>
+            <select id="einstellung-sprache">
+              <option value="en">English</option>
+              <option value="de">Deutsch</option>
+            </select></label>
+          <label class="schalter"><input type="checkbox" id="einstellung-ton"> <span data-i18n="set.sound">Sound on</span></label>
+          <label class="regler"><span data-i18n="set.volume">Volume</span>
+            <input type="range" min="0" max="100" step="5" data-einstellung="lautstaerke"><output></output></label>
+          <label class="regler"><span data-i18n="set.brightness">Brightness</span>
+            <input type="range" min="50" max="150" step="5" data-einstellung="helligkeit"><output></output></label>
+          <label class="regler"><span data-i18n="set.contrast">Contrast</span>
+            <input type="range" min="50" max="150" step="5" data-einstellung="kontrast"><output></output></label>
+          <label class="regler"><span data-i18n="set.saturation">Color saturation</span>
+            <input type="range" min="0" max="200" step="10" data-einstellung="saettigung"><output></output></label>
+          <label class="auswahl"><span data-i18n="set.quality">Graphics quality</span>
+            <select data-einstellung="qualitaet">
+              <option value="hoch" data-i18n="set.q.high">High</option>
+              <option value="niedrig" data-i18n="set.q.low">Low (faster)</option>
+            </select></label>
+          <label class="auswahl"><span data-i18n="set.pixel">Pixel rendering</span>
+            <select data-einstellung="pixel">
+              <option value="scharf" data-i18n="set.p.sharp">Sharp (retro)</option>
+              <option value="weich" data-i18n="set.p.soft">Soft</option>
+            </select></label>
+          <label class="schalter"><input type="checkbox" data-einstellung="scanlines"> <span data-i18n="set.crt">Old TV effect</span></label>
+          <label class="schalter"><input type="checkbox" data-einstellung="fps"> <span data-i18n="set.fps">Show FPS</span></label>
+        </div>
+        <div class="knopf-reihe">
+          <button class="knopf klein" id="knopf-vollbild" data-aktion="vollbild">Fullscreen</button>
+          <button class="knopf klein" data-aktion="standard" data-i18n="set.defaults">Default values</button>
+        </div>
+        <button class="knopf" data-aktion="einstellungenZurueck" data-i18n="back">Back</button>
+      </section>
+
+      <!-- Pause -->
+      <section class="menue" id="menue-pause" aria-label="Pause">
+        <h2>Pause</h2>
+        <button class="knopf" data-aktion="weiter" data-i18n="pause.resume">Resume</button>
+        <button class="knopf" data-aktion="neustart" data-i18n="pause.restart">Restart level</button>
+        <button class="knopf" data-aktion="einstellungen" data-i18n="menu.settings">Settings</button>
+        <button class="knopf" data-aktion="hauptmenue" data-i18n="menu.main">Main menu</button>
+      </section>
+
+      <!-- Game over -->
+      <section class="menue" id="menue-gameover" aria-label="Game over">
+        <h2>Game over</h2>
+        <p class="ergebnis"><span data-i18n="go.points">Points:</span> <strong id="go-punkte">0</strong></p>
+        <p class="ergebnis">Highscore: <strong class="anzeige-highscore">0</strong></p>
+        <p class="rekord" id="go-rekord" hidden data-i18n="go.newHigh">New highscore!</p>
+        <form class="namens-form" hidden>
+          <label><span data-i18n="rank.pre">Place</span> <span class="namens-platz"></span> <span data-i18n="rank.post">on the leaderboard! Your name:</span>
+            <input type="text" class="namens-feld" maxlength="12" autocomplete="off" spellcheck="false"></label>
+          <label class="online-wahl" hidden><input type="checkbox" class="online-haken"> <span data-i18n="rank.onlineCheck">Also show my entry on the public online leaderboard (use a nickname – everyone can see it)</span></label>
+          <button class="knopf klein" type="submit" data-i18n="rank.submit">Submit</button>
+        </form>
+        <p class="rekord namens-ok" hidden></p>
+        <button class="knopf" data-aktion="nochmal" data-i18n="go.again">Try again</button>
+        <button class="knopf" data-aktion="hauptmenue" data-i18n="menu.main">Main menu</button>
+      </section>
+
+      <!-- Level geschafft -->
+      <section class="menue" id="menue-geschafft" aria-label="Level complete" data-i18n-aria="aria.done">
+        <h2 id="gs-titel">Level complete!</h2>
+        <table class="ergebnis-tabelle">
+          <tr><th data-i18n="gs.coins">Coins collected</th><td id="gs-muenzen">0</td></tr>
+          <tr><th data-i18n="gs.balance">Coin balance</th><td class="anzeige-konto">0</td></tr>
+          <tr><th data-i18n="gs.timebonus">Time bonus</th><td id="gs-bonus">0</td></tr>
+          <tr><th data-i18n="points">Points</th><td id="gs-punkte">0</td></tr>
+          <tr><th>Highscore</th><td class="anzeige-highscore">0</td></tr>
+        </table>
+        <p class="rekord" id="gs-rekord" hidden data-i18n="go.newHigh">New highscore!</p>
+        <p class="rekord" id="gs-ende" hidden data-i18n="gs.end">You finished all levels – awesome!</p>
+        <form class="namens-form" hidden>
+          <label><span data-i18n="rank.pre">Place</span> <span class="namens-platz"></span> <span data-i18n="rank.post">on the leaderboard! Your name:</span>
+            <input type="text" class="namens-feld" maxlength="12" autocomplete="off" spellcheck="false"></label>
+          <label class="online-wahl" hidden><input type="checkbox" class="online-haken"> <span data-i18n="rank.onlineCheck">Also show my entry on the public online leaderboard (use a nickname – everyone can see it)</span></label>
+          <button class="knopf klein" type="submit" data-i18n="rank.submit">Submit</button>
+        </form>
+        <p class="rekord namens-ok" hidden></p>
+        <p class="hinweis" id="gs-fehlt" hidden></p>
+        <button class="knopf" id="gs-weiter" data-aktion="naechstesLevel" data-i18n="gs.next">Next level</button>
+        <button class="knopf" id="gs-kaufen" data-aktion="naechstesKaufen" hidden>Unlock next level</button>
+        <button class="knopf" data-aktion="hauptmenue" data-i18n="menu.main">Main menu</button>
+      </section>
+      <!-- Eigener Bestätigungsdialog (Browser-Dialoge werden in eingebetteten Seiten oft blockiert) -->
+      <div class="dialog" id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-text" hidden>
+        <div class="dialog-box">
+          <p id="dialog-text"></p>
+          <div class="knopf-reihe">
+            <button class="knopf" id="dialog-ja" type="button">OK</button>
+            <button class="knopf klein" id="dialog-nein" type="button">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="hochkant-hinweis" data-i18n="hint.rotate">Tip: turn your phone sideways to make the playing field bigger.</p>
+  </main>
+
+  <footer class="fuss">
+    <a href="impressum.html" data-i18n="foot.imprint">Legal notice</a>
+    <span aria-hidden="true">·</span>
+    <a href="datenschutz.html" data-i18n="foot.privacy">Privacy</a>
+    <span aria-hidden="true">·</span>
+    <span>© KreativWerkstatt Ried e.V.</span>
+  </footer>
+
+  <!-- Module (Reihenfolge wichtig: Grundlagen zuerst, game.js zuletzt) -->
+  <script src="js/speicher.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/einstellungen.js"></script>
+  <script src="js/rangliste.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/online.js"></script>
+  <script src="js/konto.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/grafik.js"></script>
+  <script src="js/level.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/ui.js"></script>
+  <!-- Level-Daten: für ein neues Level einfach eine weitere Zeile ergänzen -->
+  <script src="levels/level1.js"></script>
+  <script src="levels/level2.js"></script>
+  <script src="levels/level3.js"></script>
+  <script src="levels/level4.js"></script>
+  <script src="levels/level5.js"></script>
+  <script src="levels/level6.js"></script>
+  <script src="levels/level7.js"></script>
+  <script src="levels/level8.js"></script>
+  <script src="levels/level9.js"></script>
+  <script src="levels/level10.js"></script>
+  <script src="levels/level11.js"></script>
+  <script src="levels/level12.js"></script>
+  <script src="levels/level13.js"></script>
+  <script src="levels/level14.js"></script>
+  <script src="levels/level15.js"></script>
+  <script src="levels/level16.js"></script>
+  <script src="levels/level17.js"></script>
+  <script src="levels/level18.js"></script>
+  <script src="levels/level19.js"></script>
+  <script src="levels/level20.js"></script>
+  <script src="levels/level21.js"></script>
+  <script src="levels/level22.js"></script>
+  <script src="levels/level23.js"></script>
+  <script src="levels/level24.js"></script>
+  <script src="levels/level25.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
