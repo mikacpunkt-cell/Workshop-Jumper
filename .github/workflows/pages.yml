@@ -23,12 +23,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Nur die Spieldateien zusammenstellen
+      - name: Spieldateien einsortieren
         run: |
-          mkdir _site
-          cp index.html impressum.html datenschutz.html _site/
+          mkdir -p _site/css _site/js _site/levels
+          for f in index.html impressum.html datenschutz.html; do
+            p=$(find . -name "$f" -not -path './_site/*' -not -path './.git/*' | head -1)
+            [ -n "$p" ] && cp "$p" _site/
+          done
+          p=$(find . -name style.css -not -path './_site/*' | head -1)
+          [ -n "$p" ] && cp "$p" _site/css/
+          for n in speicher audio i18n einstellungen rangliste config online konto input grafik level player ui game; do
+            p=$(find . -name "$n.js" -not -path './_site/*' -not -path './.git/*' -not -path './server/*' -not -path './werkzeuge/*' | head -1)
+            [ -n "$p" ] && cp "$p" _site/js/
+          done
+          find . -name 'level[0-9]*.js' -not -path './_site/*' -not -path './.git/*' -not -path './werkzeuge/*' -exec cp {} _site/levels/ \;
           touch _site/.nojekyll
-          cp -r css js levels _site/
+          find _site -type f | sort
 
       - uses: actions/configure-pages@v5
 
