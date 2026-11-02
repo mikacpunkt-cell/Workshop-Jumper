@@ -26,7 +26,8 @@ jobs:
       - name: Nur die Spieldateien zusammenstellen
         run: |
           mkdir _site
-          cp index.html impressum.html datenschutz.html .nojekyll _site/
+          cp index.html impressum.html datenschutz.html _site/
+          touch _site/.nojekyll
           cp -r css js levels _site/
 
       - uses: actions/configure-pages@v5
