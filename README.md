@@ -87,12 +87,11 @@ Mit jedem Level steigen Gegnertempo (40 → 130 px/s) und Plattformgeschwindigke
 - **Level freischalten:** Hat man ein Level geschafft, kann man das nächste für Münzen kaufen (Level 2: 8 Münzen, dann +1 pro Level bis 31 für Level 25). Das geht im Ergebnisbildschirm oder in „Level wählen“. Ein eigener Preis lässt sich in der Level-Datei mit `preis: 30` setzen.
 - Fehlen Münzen, spielt man geschaffte Level einfach noch einmal – so kann niemand feststecken.
 - **Skins** (Menü „Skins“): Handwerker (gratis), Malerin 40, Schreiner 60, Näherin 70, Töpferin 80, Holzfäller 90, Bauarbeiter 100, Schweißer 120, Frostmeister 140, Elektronikerin 150, Piratin 160, Ninja 180, Nachtschicht 200, Vulkan 220, Astronaut 250, Roboter 300, Goldener Meister 400. Skins ändern nur Kleidung und Farben. Neue Skins trägt man in `js/konto.js` in die Liste `SKINS` ein (Farben: `H`/`h` Mütze, `W` Hemd, `B`/`b` Hose, `D` Schuhe, `R` Pinselstiel, `P` Farbe).
-- **Code einlösen:** Oben im Skin-Shop gibt es ein Feld „Code einlösen“. Groß-/Kleinschreibung und Leerzeichen sind egal. Es gibt drei Codes:
-  - `DEVSKIN` – Spezial-Skin „Entwickler“ (Regenbogen-Farben, die langsam wechseln).
+- **Code einlösen:** Oben im Skin-Shop gibt es ein Feld „Code einlösen“. Groß-/Kleinschreibung und Leerzeichen sind egal. Es gibt zwei öffentliche Codes:
   - `SHINY` – Spezial-Skin „Glitzer“ (silberblau, ein Lichtreflex wandert über die Figur).
   - `COINS` – 50 Münzen. Dieser Code zählt pro Gerät nur **einmal** (nach „Gespeicherte Daten löschen“ geht er wieder).
 
-  Beide Spezial-Skins sind in der Skin-Liste animiert und lila umrandet, erscheinen im Shop erst nach dem Einlösen und lassen sich nicht kaufen. Neue Codes trägt man in `js/konto.js` in `CODES` ein: `{ skin: 'id' }` für einen Skin (mit `nurPerCode: true`) oder `{ muenzen: 50 }` für Münzen. Achtung: Die Codes stehen im Quelltext und sind damit kein Geheimnis.
+Der Spezial-Skin ist in der Skin-Liste animiert und lila umrandet, erscheint im Shop erst nach dem Einlösen und lässt sich nicht kaufen. Neue Codes trägt man in `js/konto.js` in `CODES` ein: `{ skin: 'id' }` für einen Skin (mit `nurPerCode: true`) oder `{ muenzen: 50 }` für Münzen. Achtung: Die Codes stehen im Quelltext und sind damit kein Geheimnis.
 - Alles ist reine Spielwährung und wird nur lokal gespeichert. Ältere Spielstände werden übernommen (bisher freigeschaltete Level bleiben frei).
 
 ## Einstellungen
@@ -152,8 +151,8 @@ Eine Rangliste, die für alle Spielerinnen und Spieler gleich ist, braucht einen
 
 **Datenschutz-Textbaustein** (für `datenschutz.html`, nur wenn die Online-Rangliste eingeschaltet ist; die Stellen in eckigen Klammern ausfüllen; keine Rechtsberatung, bitte vom Verein prüfen lassen):
 
-> **Online-Rangliste (freiwillig).** Wenn Sie beim Eintragen den Haken „Meinen Eintrag auch in der öffentlichen Online-Rangliste zeigen“ setzen oder auf „Veröffentlichen“ klicken, senden wir Ihren Spitznamen, Ihre Punktzahl, das erreichte Level und das Datum an unseren Rangliste-Server und zeigen diese Angaben allen Besucherinnen und Besuchern des Spiels an. Ohne diese Handlung werden keine Daten übertragen. Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die Sie jederzeit widerrufen können, indem Sie uns unter [E-Mail] schreiben; wir löschen den Eintrag dann. Bitte verwenden Sie einen Spitznamen statt Ihres echten Namens. Kinder und Jugendliche unter [16] Jahren benötigen die Einwilligung der Erziehungsberechtigten.
-> Wenn Sie den Reiter „Online“ in der Rangliste öffnen, wird die Liste vom Server abgerufen; dabei wird technisch bedingt Ihre IP-Adresse an den Server übermittelt. Sie wird nicht gespeichert; zum Schutz vor Missbrauch (Begrenzung der Eintragszahl) wird ein Hashwert kurzzeitig im Arbeitsspeicher vorgehalten. Der Server wird betrieben von [Name und Anschrift des Betreibers / Hosters]. Die Einträge werden [bis zur Löschung / höchstens … Monate] gespeichert.
+> **Online-Rangliste (freiwillig).** Wenn Sie beim Eintragen den Haken „Meinen Eintrag auch in der öffentlichen Online-Rangliste zeigen“ setzen oder auf „Veröffentlichen“ klicken, senden wir Ihren Spitznamen, Ihre Punktzahl, das erreichte Level und das Datum an unseren Rangliste-Server und zeigen diese Angaben allen Besucherinnen und Besuchern des Spiels an. Ohne diese Handlung werden keine Daten übertragen. Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die Sie jederzeit widerrufen können, indem Sie uns unter [E-Mail] schreiben; wir löschen den Eintrag dann. Bitte verwenden Sie einen Spitznamen statt Ihres echten Namens.
+> Wenn Sie den Reiter „Online“ in der Rangliste öffnen, wird die Liste vom Server abgerufen; dabei wird technisch bedingt Ihre IP-Adresse an den Server übermittelt. Sie wird nicht gespeichert; zum Schutz vor Missbrauch (Begrenzung der Eintragszahl) wird ein Hashwert kurzzeitig im Arbeitsspeicher vorgehalten.
 
 **Testversion in der Claude-App:** Dort ist die Online-Rangliste mit dem gemeinsamen Speicher der Testumgebung verbunden (`typ: 'artifact'`), damit man sie ohne eigenen Server ausprobieren kann. Das ist nur für Tests gedacht und nicht für die Veröffentlichung auf GitHub Pages.
 
