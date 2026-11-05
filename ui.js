@@ -461,6 +461,10 @@
       $('gs-punkte').textContent = info.punkte;
       $('gs-rekord').hidden = !info.rekord;
       $('gs-ende').hidden = !info.letztes;
+      const geist = info.geist;
+      $('gs-zeit').textContent = geist ? KW.Geist.format(geist.zeit) : '–';
+      $('gs-bestzeit').textContent = geist && geist.bestzeit !== null ? KW.Geist.format(geist.bestzeit) : '–';
+      $('gs-neuezeit').hidden = !(geist && geist.neu);
 
       // Nächstes Level: direkt weiter, freischalten oder (zu wenig Münzen) Hinweis
       const status = info.letztes ? 'ende' : KW.Konto.levelStatus(info.naechstes);

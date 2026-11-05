@@ -137,6 +137,7 @@
             </select></label>
           <label class="schalter"><input type="checkbox" data-einstellung="scanlines"> <span data-i18n="set.crt">Old TV effect</span></label>
           <label class="schalter"><input type="checkbox" data-einstellung="fps"> <span data-i18n="set.fps">Show FPS</span></label>
+          <label class="schalter"><input type="checkbox" data-einstellung="geist"> <span data-i18n="set.ghost">Show ghost of best run</span></label>
         </div>
         <div class="knopf-reihe">
           <button class="knopf klein" id="knopf-vollbild" data-aktion="vollbild">Fullscreen</button>
@@ -180,8 +181,11 @@
           <tr><th data-i18n="gs.timebonus">Time bonus</th><td id="gs-bonus">0</td></tr>
           <tr><th data-i18n="points">Points</th><td id="gs-punkte">0</td></tr>
           <tr><th>Highscore</th><td class="anzeige-highscore">0</td></tr>
+          <tr><th data-i18n="gs.time">Run time</th><td id="gs-zeit">–</td></tr>
+          <tr><th data-i18n="gs.best">Best time</th><td id="gs-bestzeit">–</td></tr>
         </table>
         <p class="rekord" id="gs-rekord" hidden data-i18n="go.newHigh">New highscore!</p>
+        <p class="rekord" id="gs-neuezeit" hidden data-i18n="gs.newBest">New best time!</p>
         <p class="rekord" id="gs-ende" hidden data-i18n="gs.end">You finished all levels – awesome!</p>
         <form class="namens-form" hidden>
           <label><span data-i18n="rank.pre">Place</span> <span class="namens-platz"></span> <span data-i18n="rank.post">on the leaderboard! Your name:</span>
@@ -230,6 +234,7 @@
   <script src="js/grafik.js"></script>
   <script src="js/level.js"></script>
   <script src="js/player.js"></script>
+  <script src="js/geist.js"></script>
   <script src="js/ui.js"></script>
   <!-- Level-Daten: für ein neues Level einfach eine weitere Zeile ergänzen -->
   <script src="levels/level1.js"></script>

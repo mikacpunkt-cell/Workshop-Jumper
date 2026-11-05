@@ -165,6 +165,7 @@
       }
       this.level.update(dt, this.spieler);
       this.spieler.update(dt, this.level);
+      KW.Geist.schritt(this.spieler);
       this.pruefeBeruehrungen();
       if (this.zustand === 'spielen' && this.spieler.y > this.level.pixelHoehe + 32) this.stirb();
       this.kameraNachfuehren(dt, false);
@@ -317,6 +318,8 @@
       KW.Audio.spielen('levelEnde');
       // Level als geschafft merken – das nächste kann jetzt mit Münzen gekauft werden
       KW.Konto.setzeGeschafft(this.level.nummer);
+      // Laufzeit festhalten; bei neuer Bestzeit wird der Geist gespeichert
+      this.geistInfo = KW.Geist.beenden(this.level.nummer, this.spieler);
       // Die übrigen Leben gelten für das nächste Level (auch nach einem Umweg übers Menü)
       KW.Speicher.schreiben('lebenWeiter', { level: this.levelIndex + 1, leben: this.leben });
       this.setzeZustand('geschafft');
@@ -339,6 +342,7 @@
         bonus,
         punkte: this.punkte,
         rekord,
+        geist: this.geistInfo,
         letztes: this.levelIndex >= KW.LEVELS.length - 1
       });
     },
@@ -403,6 +407,8 @@
       const pos = KW.Spieler.ausKachel(this.level.start.tx, this.level.start.ty);
       this.spieler = new KW.Spieler(pos.x, pos.y);
       this.checkpoint = null;
+      this.geistInfo = null;
+      KW.Geist.start(this.level.nummer);
       this.zeit = this.level.zeitLimit;
       this.akku = 0;
       KW.Input.reset();
@@ -429,6 +435,7 @@
       this.highscoreSpeichern();
       this.level = null;
       this.spieler = null;
+      KW.Geist.verwerfen();
       this.setzeZustand('menue');
       KW.UI.aktualisiereHighscore();
       KW.UI.zeige('menue-start');
@@ -468,6 +475,9 @@
       g.imageSmoothingEnabled = false;
       KW.Grafik.zeichneHintergrund(g, l.thema, kx, ky, this.laufzeit);
       l.zeichne(g, kx, ky, this.laufzeit);
+      if (this.level && this.spieler && ['spielen', 'stirbt', 'pause'].includes(this.zustand)) {
+        KW.Geist.zeichne(g, kx, ky);
+      }
       if (this.level && this.spieler) this.spieler.zeichne(g, kx, ky, this.laufzeit);
       l.zeichneEffekte(g, kx, ky);
 

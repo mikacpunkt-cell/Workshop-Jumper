@@ -16,7 +16,8 @@
     qualitaet: 'hoch',   // hoch | niedrig (ohne Parallax-Deko und Funken)
     pixel: 'scharf',     // scharf | weich
     scanlines: false,    // Röhrenfernseher-Effekt
-    fps: false           // Bilder pro Sekunde anzeigen
+    fps: false,          // Bilder pro Sekunde anzeigen
+    geist: true          // Geist der Bestzeit anzeigen
   };
 
   // Erlaubte Bereiche – schützt vor beschädigten gespeicherten Werten
@@ -33,7 +34,7 @@
       if (Number.isFinite(zahl)) w[k] = Math.min(BEREICHE[k][1], Math.max(BEREICHE[k][0], zahl));
     });
     Object.keys(AUSWAHL).forEach((k) => { if (AUSWAHL[k].includes(roh[k])) w[k] = roh[k]; });
-    ['scanlines', 'fps'].forEach((k) => { if (typeof roh[k] === 'boolean') w[k] = roh[k]; });
+    ['scanlines', 'fps', 'geist'].forEach((k) => { if (typeof roh[k] === 'boolean') w[k] = roh[k]; });
     return w;
   }
 
