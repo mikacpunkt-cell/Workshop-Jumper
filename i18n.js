@@ -18,8 +18,8 @@
 
   const TEXTE = {
     en: {
-      'head.title': 'Werkstatt-Hüpfer – a jump & run by KreativWerkstatt Ried',
-      'head.desc': 'Werkstatt-Hüpfer: a small 2D jump-and-run browser game by KreativWerkstatt Ried e.V.',
+      'head.title': 'Workshop-Jumper – a jump & run by KreativWerkstatt Ried',
+      'head.desc': 'Workshop-Jumper: a small 2D jump-and-run browser game by KreativWerkstatt Ried e.V.',
       'head.sub': 'A jump & run by KreativWerkstatt Ried',
       'aria.canvas': 'Game area',
       'aria.done': 'Level complete',
@@ -155,8 +155,8 @@
     },
 
     de: {
-      'head.title': 'Werkstatt-Hüpfer – ein Jump & Run der KreativWerkstatt Ried',
-      'head.desc': 'Werkstatt-Hüpfer: ein kleines 2D-Jump-and-Run-Browserspiel der KreativWerkstatt Ried e.V.',
+      'head.title': 'Workshop-Jumper – ein Jump & Run der KreativWerkstatt Ried',
+      'head.desc': 'Workshop-Jumper: ein kleines 2D-Jump-and-Run-Browserspiel der KreativWerkstatt Ried e.V.',
       'head.sub': 'Ein Jump & Run der KreativWerkstatt Ried',
       'aria.canvas': 'Spielfläche',
       'aria.done': 'Level geschafft',
