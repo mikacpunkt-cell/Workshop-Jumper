@@ -32,7 +32,7 @@ jobs:
           done
           p=$(find . -name style.css -not -path './_site/*' | head -1)
           [ -n "$p" ] && cp "$p" _site/css/
-          for n in speicher audio i18n einstellungen rangliste config online konto input grafik level player ui game; do
+          for n in speicher audio i18n einstellungen rangliste config online konto input grafik level player geist ui game; do
             p=$(find . -name "$n.js" -not -path './_site/*' -not -path './.git/*' -not -path './server/*' -not -path './werkzeuge/*' | head -1)
             [ -n "$p" ] && cp "$p" _site/js/
           done
