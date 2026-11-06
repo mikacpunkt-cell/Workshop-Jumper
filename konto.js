@@ -63,7 +63,7 @@
   const CODES = {
     DEVSKIN: { skin: 'dev' },
     SHINY: { skin: 'shiny' },
-    COINS: { muenzen: 1000 }
+    COINS: { muenzen: 100 }
   };
 
   const ganzzahl = (wert, standard) => {
