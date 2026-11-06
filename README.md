@@ -1,4 +1,4 @@
-# Werkstatt-Hüpfer
+# Workshop-Jumper
 
 Ein kleines 2D-Jump-and-Run der **KreativWerkstatt Ried e.V.** – mit HTML5 Canvas und reinem JavaScript, ohne Frameworks und ohne externe Abhängigkeiten.
 
