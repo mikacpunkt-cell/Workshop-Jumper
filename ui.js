@@ -254,6 +254,7 @@
       switch (name) {
         case 'spielen': s.neuesSpiel(0); break;
         case 'levelwahl': this.zeigeLevelwahl(); break;
+        case 'editor': KW.Editor.oeffnen(); break;
         case 'steuerung': this.zeige('menue-steuerung'); break;
         case 'rangliste': this.zeigeRangliste(-1, 'lokal'); break;
         case 'ranglisteLokal': this.zeigeRangliste(-1, 'lokal'); break;

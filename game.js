@@ -19,6 +19,7 @@
   }
 
   const Spiel = {
+    editorTest: null,   // läuft gerade ein Test aus dem Level-Editor?
     zustand: 'menue',   // menue | spielen | pause | stirbt | geschafft | ergebnis | gameover
     levelIndex: 0,
     level: null,
@@ -303,6 +304,7 @@
     },
 
     gameOver() {
+      if (this.editorTest) { this.editorTestBeenden('gameover'); return; }
       KW.Speicher.schreiben('lebenWeiter', null);   // nach Game over beginnt ein frischer Durchgang
       this.muenzenVerbuchen();
       const rekord = this.highscoreSpeichern();
@@ -326,6 +328,7 @@
     },
 
     zeigeErgebnis() {
+      if (this.editorTest) { this.editorTestBeenden('geschafft'); return; }
       const restzeit = Math.ceil(this.zeit);
       const bonus = restzeit * 5;
       this.punkte += bonus;
@@ -402,7 +405,8 @@
       this.punkteBeiStart = this.punkte;
       this.muenzenBeiStart = this.muenzen;
       this.muenzenVerbucht = this.muenzen;
-      this.level = new KW.Level(KW.LEVELS[index], index);
+      // Im Editor-Test kommt das Level aus dem Editor statt aus der Levelliste
+      this.level = new KW.Level(this.editorTest ? this.editorTest.daten : KW.LEVELS[index], index);
       this.level.spiel = this;
       const pos = KW.Spieler.ausKachel(this.level.start.tx, this.level.start.ty);
       this.spieler = new KW.Spieler(pos.x, pos.y);
@@ -430,7 +434,38 @@
       else this.zumHauptmenue();
     },
 
+    /**
+     * Level aus dem Editor ausprobieren. Alles, was dabei gespeichert würde
+     * (Münzen, Highscore, Bestzeit-Geist …), landet nur im Zwischenspeicher
+     * und verschwindet am Ende wieder – der echte Spielstand bleibt unberührt.
+     * zurueck(ergebnis) wird am Ende aufgerufen: 'geschafft', 'gameover' oder 'abbruch'.
+     */
+    editorTestStarten(daten, zurueck) {
+      this.editorTest = { daten: daten, zurueck: zurueck };
+      KW.Speicher.testBeginnen();
+      this.punkte = 0;
+      this.muenzen = 0;
+      this.leben = START_LEBEN;
+      this.ladeLevel(0);
+    },
+
+    editorTestBeenden(ergebnis) {
+      const test = this.editorTest;
+      if (!test) return;
+      this.editorTest = null;
+      KW.Speicher.testBeenden();
+      this.level = null;
+      this.spieler = null;
+      KW.Geist.verwerfen();
+      KW.Input.reset();
+      this.setzeZustand('menue');
+      KW.UI.aktualisiereHighscore();
+      KW.UI.zeige('menue-start');
+      test.zurueck(ergebnis);
+    },
+
     zumHauptmenue() {
+      if (this.editorTest) { this.editorTestBeenden('abbruch'); return; }
       if (this.level) this.muenzenVerbuchen();
       this.highscoreSpeichern();
       this.level = null;
