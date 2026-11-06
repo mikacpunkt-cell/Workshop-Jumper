@@ -89,7 +89,7 @@ Mit jedem Level steigen Gegnertempo (40 → 130 px/s) und Plattformgeschwindigke
 - **Skins** (Menü „Skins“): Handwerker (gratis), Malerin 40, Schreiner 60, Näherin 70, Töpferin 80, Holzfäller 90, Bauarbeiter 100, Schweißer 120, Frostmeister 140, Elektronikerin 150, Piratin 160, Ninja 180, Nachtschicht 200, Vulkan 220, Astronaut 250, Roboter 300, Goldener Meister 400. Skins ändern nur Kleidung und Farben. Neue Skins trägt man in `js/konto.js` in die Liste `SKINS` ein (Farben: `H`/`h` Mütze, `W` Hemd, `B`/`b` Hose, `D` Schuhe, `R` Pinselstiel, `P` Farbe).
 - **Code einlösen:** Oben im Skin-Shop gibt es ein Feld „Code einlösen“. Groß-/Kleinschreibung und Leerzeichen sind egal. Es gibt zwei öffentliche Codes:
   - `SHINY` – Spezial-Skin „Glitzer“ (silberblau, ein Lichtreflex wandert über die Figur).
-  - `COINS` – 50 Münzen. Dieser Code zählt pro Gerät nur **einmal** (nach „Gespeicherte Daten löschen“ geht er wieder).
+  - `COINS` – 100 Münzen. Dieser Code zählt pro Gerät nur **einmal** (nach „Gespeicherte Daten löschen“ geht er wieder).
 
 Der Spezial-Skin ist in der Skin-Liste animiert und lila umrandet, erscheint im Shop erst nach dem Einlösen und lässt sich nicht kaufen. Neue Codes trägt man in `js/konto.js` in `CODES` ein: `{ skin: 'id' }` für einen Skin (mit `nurPerCode: true`) oder `{ muenzen: 50 }` für Münzen. Achtung: Die Codes stehen im Quelltext und sind damit kein Geheimnis.
 - Alles ist reine Spielwährung und wird nur lokal gespeichert. Ältere Spielstände werden übernommen (bisher freigeschaltete Level bleiben frei).
