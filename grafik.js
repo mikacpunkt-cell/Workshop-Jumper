@@ -166,8 +166,46 @@
     sprung:  ['..BBB.BB....', '..DDD.BB....', '......DDD...', '............']
   };
   const spielerCache = {};
+
+  /** Pixelbild aus einem Raster mit freien Farben ('' = durchsichtig, sonst '#rrggbb'). */
+  function pixelSprite(zeilen, links, skala) {
+    skala = skala || 2;
+    const b = zeilen[0].length;
+    const h = zeilen.length;
+    return male(b * skala, h * skala, (g) => {
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < b; x++) {
+          const farbe = zeilen[y][x];
+          if (!farbe) continue;
+          g.fillStyle = farbe;
+          g.fillRect((links ? b - 1 - x : x) * skala, y * skala, skala, skala);
+        }
+      }
+    });
+  }
+
+  /** Die Standard-Figur (Handwerker) als Farbraster – Startpunkt für den eigenen Skin. */
+  function spielerVorlage() {
+    const palette = Object.assign({}, SPIELER_PALETTE, KW.Konto.SKINS[0].farben);
+    const zeile = (z) => z.split('').map((c) => (c !== '.' && palette[c]) || '');
+    const beine = {};
+    Object.keys(SPIELER_BEINE).forEach((frame) => { beine[frame] = SPIELER_BEINE[frame].map(zeile); });
+    return { koerper: SPIELER_OBEN.map(zeile), beine: beine };
+  }
+
   /** Spielfigur; `skin` (optional) ersetzt die Farben der Kleidung. */
   function spielerBild(frame, links, skin) {
+    // Eigener Skin: frei gezeichnete Pixel (statisch, ohne Farbeffekte)
+    if (skin && skin.eigen) {
+      const d = KW.Konto.eigenerSkinDaten();
+      const endung = 'eigen' + d.rev;
+      const k = frame + (links ? 'L' : 'R') + endung;
+      if (!spielerCache[k]) {
+        Object.keys(spielerCache).forEach((alt) => { if (alt.indexOf('eigen') > 0 && !alt.endsWith(endung)) delete spielerCache[alt]; });
+        spielerCache[k] = pixelSprite(d.koerper.concat(d.beine[frame] || d.beine.stehen), links, 2);
+      }
+      return spielerCache[k];
+    }
     // Animierte Skins: Regenbogen (Farben wandern langsam im Kreis, 24 Phasen à 250 ms = 6 s)
     // und Glanz (ein Lichtreflex läuft von der Mütze über das Hemd zur Hose, 20 Phasen à 110 ms)
     const phase = !skin ? -1 : skin.regenbogen ? Math.floor(Date.now() / 250) % 24
@@ -824,7 +862,7 @@
 
   KW.Grafik = {
     BREITE, HOEHE,
-    neueCanvas, sprite, spielerBild, gegnerBild, muenzBild, federBild, herzBild,
+    neueCanvas, sprite, spielerBild, pixelSprite, spielerVorlage, gegnerBild, muenzBild, federBild, herzBild,
     kachelSatz, zeichneCheckpoint, zeichneTuer, zeichneHintergrund, text
   };
 })();

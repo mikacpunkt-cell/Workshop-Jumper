@@ -425,11 +425,25 @@
               if (!ja || !KW.Konto.skinKaufen(skin.id)) return;
               KW.Audio.spielen('powerup');
               this.zeigeShop(skin.id);
+              // Frisch gekauft: gleich zum Zeichnen einladen
+              if (skin.eigen) KW.SkinEditor.oeffnen({ beiSchliessen: () => this.zeigeShop(skin.id) });
             });
           }
         });
         if (skin.id === fokusId) fokusKnopf = knopf;
         karte.append(vorschau, name, knopf);
+        // Der eigene Skin lässt sich nach dem Kauf jederzeit bearbeiten
+        if (skin.eigen && besitzt) {
+          const bearbeiten = document.createElement('button');
+          bearbeiten.className = 'knopf klein';
+          bearbeiten.style.marginTop = '4px';
+          bearbeiten.textContent = KW.I18n.t('shop.edit');
+          bearbeiten.addEventListener('click', () => {
+            KW.Audio.spielen('klick');
+            KW.SkinEditor.oeffnen({ beiSchliessen: () => this.zeigeShop(skin.id) });
+          });
+          karte.append(bearbeiten);
+        }
         raster.appendChild(karte);
       });
       // Regenbogen-Vorschau animieren, solange der Shop offen ist

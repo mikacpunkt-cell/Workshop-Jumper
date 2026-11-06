@@ -18,8 +18,8 @@
 
   const TEXTE = {
     en: {
-      'head.title': 'Workshp-Jumper – a jump & run by KreativWerkstatt Ried',
-      'head.desc': 'Workshop-Jumper: a small 2D jump-and-run browser game by KreativWerkstatt Ried e.V.',
+      'head.title': 'Werkstatt-Hüpfer – a jump & run by KreativWerkstatt Ried',
+      'head.desc': 'Werkstatt-Hüpfer: a small 2D jump-and-run browser game by KreativWerkstatt Ried e.V.',
       'head.sub': 'A jump & run by KreativWerkstatt Ried',
       'aria.canvas': 'Game area',
       'aria.done': 'Level complete',
@@ -60,6 +60,7 @@
       'shop.missing': 'You still need {n} coins for “{name}”.',
       'shop.confirm': 'Buy the skin “{name}” for {p} coins and wear it?',
       'shop.buy': 'Buy',
+      'shop.edit': 'Edit',
 
       'ctl.walk.k': 'Walk',
       'ctl.walk.v': 'Arrow keys ← → or A / D',
@@ -156,8 +157,8 @@
     },
 
     de: {
-      'head.title': 'Workshop-Jumper – ein Jump & Run der KreativWerkstatt Ried',
-      'head.desc': 'Workshop-Jumper: ein kleines 2D-Jump-and-Run-Browserspiel der KreativWerkstatt Ried e.V.',
+      'head.title': 'Werkstatt-Hüpfer – ein Jump & Run der KreativWerkstatt Ried',
+      'head.desc': 'Werkstatt-Hüpfer: ein kleines 2D-Jump-and-Run-Browserspiel der KreativWerkstatt Ried e.V.',
       'head.sub': 'Ein Jump & Run der KreativWerkstatt Ried',
       'aria.canvas': 'Spielfläche',
       'aria.done': 'Level geschafft',
@@ -198,6 +199,7 @@
       'shop.missing': 'Für „{name}“ fehlen dir noch {n} Münzen.',
       'shop.confirm': 'Skin „{name}“ für {p} Münzen kaufen und anziehen?',
       'shop.buy': 'Kaufen',
+      'shop.edit': 'Bearbeiten',
 
       'ctl.walk.k': 'Laufen',
       'ctl.walk.v': 'Pfeiltasten ← → oder A / D',
@@ -308,7 +310,7 @@
     toepferin: 'Potter', holzfaeller: 'Lumberjack', bauarbeiter: 'Builder', schweisser: 'Welder',
     frost: 'Frost Master', elektronikerin: 'Electrician', pirat: 'Pirate', ninja: 'Ninja',
     nachtschicht: 'Night Shift', vulkan: 'Volcano', astronaut: 'Astronaut', roboter: 'Robot',
-    gold: 'Golden Master', dev: 'Developer', shiny: 'Shiny'
+    gold: 'Golden Master', eigener: 'Custom skin', dev: 'Developer', shiny: 'Shiny'
   };
 
   const I18n = {

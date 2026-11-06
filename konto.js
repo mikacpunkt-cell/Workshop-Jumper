@@ -47,6 +47,9 @@
       farben: { H: '#9aa6b2', h: '#6a7480', W: '#c4ccd4', B: '#7a8692', b: '#4e5964', D: '#2e343a', R: '#40e0ff', P: '#40ff9a' } },
     { id: 'gold', name: 'Goldener Meister', preis: 400,
       farben: { H: '#ffd23f', h: '#c9a020', W: '#fff3b0', B: '#e0b030', b: '#a8801a', D: '#7a5a10', R: '#fff8d6', P: '#ffffff' } },
+    // Eigener Skin: kostet einmalig 500 Münzen und lässt sich danach jederzeit im Skin-Editor
+    // bearbeiten. Er ist statisch (kein Farbwechsel, kein Glitzern) – die Pixel stehen im Speicher.
+    { id: 'eigener', name: 'Eigener Skin', preis: 500, eigen: true, farben: {} },
     { id: 'dev', name: 'Entwickler', preis: 0, nurPerCode: true, regenbogen: true, animiert: true,
       farben: { H: '#ff3b3b', h: '#b01e1e', W: '#3bd0ff', B: '#a64bff', b: '#6a2fb0', D: '#222222', R: '#ffffff', P: '#ffd23f' } },
     { id: 'shiny', name: 'Glitzer', preis: 0, nurPerCode: true, glanz: true, animiert: true,
@@ -67,6 +70,40 @@
     const n = parseInt(wert, 10);
     return Number.isFinite(n) && n >= 0 ? n : standard;
   };
+
+  /* ---------- Eigener Skin: Pixelraster prüfen ---------- */
+  const POSEN = ['stehen', 'laufen1', 'laufen2', 'sprung'];
+  const HEX_FARBE = /^#[0-9a-f]{6}$/i;
+  /** Zeilenraster prüfen: `anzahl` Zeilen mit je 12 Zellen ('' oder '#rrggbb'); sonst null. */
+  function zeilenPruefen(zeilen, anzahl) {
+    if (!Array.isArray(zeilen) || zeilen.length !== anzahl) return null;
+    const ergebnis = [];
+    for (let y = 0; y < anzahl; y++) {
+      const z = zeilen[y];
+      if (!Array.isArray(z) || z.length !== 12) return null;
+      const reihe = [];
+      for (let x = 0; x < 12; x++) {
+        const c = z[x];
+        if (typeof c !== 'string' || (c !== '' && !HEX_FARBE.test(c))) return null;
+        reihe.push(c.toLowerCase());
+      }
+      ergebnis.push(reihe);
+    }
+    return ergebnis;
+  }
+  /** Gesamten Skin prüfen; liefert { koerper, beine } oder null. */
+  function skinRasterPruefen(roh) {
+    if (!roh || typeof roh !== 'object') return null;
+    const koerper = zeilenPruefen(roh.koerper, 12);
+    if (!koerper || !roh.beine || typeof roh.beine !== 'object') return null;
+    const beine = {};
+    for (let i = 0; i < POSEN.length; i++) {
+      beine[POSEN[i]] = zeilenPruefen(roh.beine[POSEN[i]], 4);
+      if (!beine[POSEN[i]]) return null;
+    }
+    return { koerper, beine };
+  }
+  let skinZwischenspeicher = null;   // { zeit, daten } – das Spiel fragt den Skin oft ab
 
   const Konto = {
     SKINS,
@@ -150,6 +187,34 @@
     },
     skinWaehlen(id) {
       if (this.besitzt(id)) KW.Speicher.schreiben('skin', id);
+    },
+
+    /** Die gezeichneten Pixel des eigenen Skins (oder die Handwerker-Vorlage, solange nichts gespeichert ist). */
+    eigenerSkinDaten() {
+      const jetzt = Date.now();
+      if (skinZwischenspeicher && jetzt - skinZwischenspeicher.zeit < 500) return skinZwischenspeicher.daten;
+      const roh = KW.Speicher.lesen('eigenerSkin', null);
+      const raster = skinRasterPruefen(roh);
+      let daten;
+      if (raster) {
+        daten = { rev: ganzzahl(roh.rev, 0), koerper: raster.koerper, beine: raster.beine };
+      } else {
+        const vorlage = KW.Grafik.spielerVorlage();
+        daten = { rev: 0, koerper: vorlage.koerper, beine: vorlage.beine };
+      }
+      skinZwischenspeicher = { zeit: jetzt, daten: daten };
+      return daten;
+    },
+    /** Speichert den eigenen Skin (nur, wenn er gekauft ist und die Daten gültig sind). */
+    eigenerSkinSpeichern(daten) {
+      if (!this.besitzt('eigener')) return false;
+      const raster = skinRasterPruefen(daten);
+      if (!raster) return false;
+      const alt = KW.Speicher.lesen('eigenerSkin', null);
+      const rev = ganzzahl(alt && alt.rev, 0) + 1;
+      KW.Speicher.schreiben('eigenerSkin', { rev: rev, koerper: raster.koerper, beine: raster.beine });
+      skinZwischenspeicher = null;
+      return true;
     },
 
     /** Skins, die im Shop angezeigt werden (Code-Skins erst nach dem Einlösen). */
