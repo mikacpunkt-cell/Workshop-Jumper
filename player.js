@@ -173,6 +173,7 @@
             this.puffer = 0; // verhindert, dass direkt ein Doppelsprung verpufft
             level.trampolinStoss(trampolinX, ty);
             KW.Audio.spielen('trampolin');
+            if (KW.Erfolge) KW.Erfolge.ereignis('trampolin');
           }
         }
       }

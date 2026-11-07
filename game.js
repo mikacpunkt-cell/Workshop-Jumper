@@ -19,6 +19,7 @@
   }
 
   const Spiel = {
+    levelTode: 0,       // Tode im aktuellen Durchlauf des Levels (für Erfolge)
     editorTest: null,   // läuft gerade ein Test aus dem Level-Editor?
     zustand: 'menue',   // menue | spielen | pause | stirbt | geschafft | ergebnis | gameover
     levelIndex: 0,
@@ -212,6 +213,7 @@
       for (const it of l.items) {
         if (!it.weg && ueberlappt(s, it.x, it.y, it.w, it.h)) {
           it.weg = true;
+          this.erfolg('powerup');
           s.dsZeit = 10;
           s.dsVerbraucht = false;
           KW.Audio.spielen('powerup');
@@ -248,6 +250,7 @@
       for (const cp of l.checkpoints) {
         if (!cp.aktiv && ueberlappt(s, cp.tx * T, (cp.ty - 5) * T, T, 6 * T)) {
           cp.aktiv = true;
+          this.erfolg('checkpoint');
           this.checkpoint = cp;
           KW.Audio.spielen('checkpoint');
           l.text(cp.tx * T + 16, cp.ty * T - 40, KW.I18n.t('hud.checkpoint'), '#7dff8a');
@@ -259,8 +262,14 @@
       if (z && ueberlappt(s, z.tx * T + 8, (z.ty - 5) * T, 16, 6 * T)) this.levelGeschafft();
     },
 
+    /** Meldet ein Ereignis an die Erfolge (falls das Modul geladen ist). */
+    erfolg(art, info) {
+      if (KW.Erfolge) KW.Erfolge.ereignis(art, info);
+    },
+
     muenzeEinsammeln(gross, x, y) {
       this.muenzen += gross ? 5 : 1; // große Münze zählt 5 Münzen
+      this.erfolg('muenze', gross ? 5 : 1);
       const wert = gross ? 100 : 10;
       this.punkte += wert;
       KW.Audio.spielen(gross ? 'grosseMuenze' : 'muenze');
@@ -271,6 +280,7 @@
       g.lebendig = false;
       g.plattZeit = 0.5;
       this.punkte += 50;
+      this.erfolg('gegner');
       KW.Audio.spielen('stampfen');
       this.level.text(g.x + g.w / 2, g.y - 8, '+50', '#fff');
       this.level.funken(g.x + g.w / 2, g.y + g.h / 2, 8, this.level.thema.gegner.G);
@@ -281,6 +291,8 @@
     stirb() {
       if (this.zustand !== 'spielen') return;
       this.leben -= 1;
+      this.levelTode += 1;
+      this.erfolg('tod');
       this.spieler.sterben();
       KW.Audio.spielen('treffer');
       this.zustandTimer = 1.6;
@@ -322,6 +334,14 @@
       KW.Konto.setzeGeschafft(this.level.nummer);
       // Laufzeit festhalten; bei neuer Bestzeit wird der Geist gespeichert
       this.geistInfo = KW.Geist.beenden(this.level.nummer, this.spieler);
+      // Erfolge: Wie wurde das Level geschafft?
+      this.erfolg('level', {
+        nummer: this.level.nummer,
+        ohneTod: this.levelTode === 0,
+        alleMuenzen: this.level.muenzen.length > 0 && this.level.muenzen.every((m) => m.weg),
+        flink: this.zeit >= this.level.zeitLimit / 2,
+        geist: !!(this.geistInfo && this.geistInfo.neu && this.geistInfo.vorher !== null)
+      });
       // Die übrigen Leben gelten für das nächste Level (auch nach einem Umweg übers Menü)
       KW.Speicher.schreiben('lebenWeiter', { level: this.levelIndex + 1, leben: this.leben });
       this.setzeZustand('geschafft');
@@ -412,6 +432,7 @@
       this.spieler = new KW.Spieler(pos.x, pos.y);
       this.checkpoint = null;
       this.geistInfo = null;
+      this.levelTode = 0;
       KW.Geist.start(this.level.nummer);
       this.zeit = this.level.zeitLimit;
       this.akku = 0;
@@ -442,6 +463,7 @@
      */
     editorTestStarten(daten, zurueck) {
       this.editorTest = { daten: daten, zurueck: zurueck };
+      if (KW.Erfolge) KW.Erfolge.speichern();   // vor dem Testmodus sichern
       KW.Speicher.testBeginnen();
       this.punkte = 0;
       this.muenzen = 0;
@@ -454,6 +476,7 @@
       if (!test) return;
       this.editorTest = null;
       KW.Speicher.testBeenden();
+      if (ergebnis === 'geschafft') this.erfolg('testLevel');
       this.level = null;
       this.spieler = null;
       KW.Geist.verwerfen();

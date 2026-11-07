@@ -92,7 +92,7 @@
       }
       const neu = !a.voll && zeit > 0 && (this.bestzeit === null || zeit < this.bestzeit);
       if (neu) KW.Speicher.schreiben(schluessel(nummer), { zeit: zeit, d: a.d });
-      return { zeit: zeit, bestzeit: neu ? zeit : this.bestzeit, neu: neu };
+      return { zeit: zeit, bestzeit: neu ? zeit : this.bestzeit, neu: neu, vorher: this.bestzeit };
     },
 
     /** Geist ins Spielfeld zeichnen (vor der Spielfigur). */

@@ -45,8 +45,19 @@
         <button class="knopf" data-aktion="steuerung" data-i18n="menu.controls">Controls</button>
         <p class="highscore-zeile"><span data-i18n="menu.highscore">Highscore:</span> <strong class="anzeige-highscore">0</strong>
           &nbsp;·&nbsp; <span data-i18n="menu.coins">Coins:</span> <strong class="anzeige-konto">0</strong></p>
-        <button class="knopf klein" data-aktion="editor" data-i18n="menu.editor">Level editor</button>
-        <button class="knopf klein" data-aktion="datenLoeschen" data-i18n="menu.deleteData">Delete saved data</button>
+        <div class="knopf-reihe">
+          <button class="knopf klein" data-aktion="erfolge" data-i18n="menu.achievements">Achievements</button>
+          <button class="knopf klein" data-aktion="editor" data-i18n="menu.editor">Level editor</button>
+          <button class="knopf klein" data-aktion="datenLoeschen" data-i18n="menu.deleteData">Delete saved data</button>
+        </div>
+      </section>
+
+      <!-- Erfolge -->
+      <section class="menue" id="menue-erfolge" aria-label="Achievements" data-i18n-aria="menu.achievements">
+        <h2 data-i18n="menu.achievements">Achievements</h2>
+        <p class="konto-zeile"><strong id="erfolge-zusammenfassung"></strong></p>
+        <div class="erfolg-liste" id="erfolg-liste"></div>
+        <button class="knopf" data-aktion="zurueck" data-i18n="back">Back</button>
       </section>
 
       <!-- Level-Auswahl -->
@@ -238,6 +249,7 @@
   <script src="js/geist.js"></script>
   <script src="js/editor.js"></script>
   <script src="js/skineditor.js"></script>
+  <script src="js/erfolge.js"></script>
   <script src="js/ui.js"></script>
   <!-- Level-Daten: für ein neues Level einfach eine weitere Zeile ergänzen -->
   <script src="levels/level1.js"></script>

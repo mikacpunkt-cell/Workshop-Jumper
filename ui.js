@@ -255,6 +255,7 @@
         case 'spielen': s.neuesSpiel(0); break;
         case 'levelwahl': this.zeigeLevelwahl(); break;
         case 'editor': KW.Editor.oeffnen(); break;
+        case 'erfolge': KW.Erfolge.zeigen(); break;
         case 'steuerung': this.zeige('menue-steuerung'); break;
         case 'rangliste': this.zeigeRangliste(-1, 'lokal'); break;
         case 'ranglisteLokal': this.zeigeRangliste(-1, 'lokal'); break;
@@ -282,6 +283,7 @@
           this.frage(KW.I18n.t('data.confirm'), KW.I18n.t('data.yes'), KW.I18n.t('ui.cancel')).then((ja) => {
             if (!ja) return;
             KW.Speicher.allesLoeschen();
+            KW.Erfolge.neuLaden();
             KW.Speicher.schreiben('sprache', KW.I18n.sprache); // die Sprache bleibt
             KW.Einstellungen.neuLaden();
             KW.Audio.an = true;

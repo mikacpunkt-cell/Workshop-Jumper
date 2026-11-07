@@ -63,7 +63,7 @@
   const CODES = {
     DEVSKIN: { skin: 'dev' },
     SHINY: { skin: 'shiny' },
-    COINS: { muenzen: 100 }
+    COINS: { muenzen: 50 }
   };
 
   const ganzzahl = (wert, standard) => {
@@ -183,6 +183,10 @@
       const liste = KW.Speicher.lesen('skins', []);
       KW.Speicher.schreiben('skins', (Array.isArray(liste) ? liste : []).concat(id));
       KW.Speicher.schreiben('skin', id);
+      if (KW.Erfolge) {
+        KW.Erfolge.ereignis('skin');
+        if (s.eigen) KW.Erfolge.ereignis('eigenerSkinGekauft');
+      }
       return true;
     },
     skinWaehlen(id) {
@@ -214,6 +218,13 @@
       const rev = ganzzahl(alt && alt.rev, 0) + 1;
       KW.Speicher.schreiben('eigenerSkin', { rev: rev, koerper: raster.koerper, beine: raster.beine });
       skinZwischenspeicher = null;
+      // Erfolg „Künstler“ nur, wenn der Skin wirklich von der Vorlage abweicht
+      if (KW.Erfolge) {
+        const vorlage = KW.Grafik.spielerVorlage();
+        if (JSON.stringify({ koerper: raster.koerper, beine: raster.beine }) !== JSON.stringify({ koerper: vorlage.koerper, beine: vorlage.beine })) {
+          KW.Erfolge.ereignis('eigenerSkinGezeichnet');
+        }
+      }
       return true;
     },
 
@@ -237,6 +248,7 @@
         const liste = KW.Speicher.lesen('skins', []);
         KW.Speicher.schreiben('skins', (Array.isArray(liste) ? liste : []).concat(skin.id));
         KW.Speicher.schreiben('skin', skin.id);
+        if (KW.Erfolge) KW.Erfolge.ereignis('skin');
         return { status: 'neu', skin };
       }
 
